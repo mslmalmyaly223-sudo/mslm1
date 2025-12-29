@@ -4701,12 +4701,14 @@ const reportButton = `
       </div>
     </div>
     
-    <div class="post-stats">
-      <span class="views-count">
-        <i class="fas fa-comments"></i>
-        <span>${commentsCount} تعليق</span>
-      </span>
-    </div>
+    ${post.contactMethod === "comments" ? `
+<div class="post-stats">
+  <span class="views-count">
+    <i class="fas fa-comments"></i>
+    <span>${commentsCount} تعليق</span>
+  </span>
+</div>
+` : ''}
     
     <div class="post-actions-new">
       ${contactButton}
