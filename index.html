@@ -2460,6 +2460,514 @@
   transform: translateY(-2px);
 }
 
+/* إصلاحات المحاذاة والنصوص العربية */
+* {
+    text-align: right !important;
+    direction: rtl !important;
+}
+
+body, .container, .post, .company, .modal-content {
+    text-align: right !important;
+    direction: rtl !important;
+}
+
+/* إصلاح محاذاة النصوص داخل العناصر */
+.post-header, .user-info, .user-details, .post-content, .post-meta {
+    text-align: right !important;
+    direction: rtl !important;
+}
+
+/* إصلاح عرض النصوص الطويلة */
+.post-description, .company .desc {
+    text-align: right !important;
+    direction: rtl !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
+/* إصلاح الجدول والعناصر */
+.filter-container {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+}
+
+.filter-select {
+    flex: 1 !important;
+    text-align: right !important;
+    direction: rtl !important;
+}
+
+/* إصلاح محاذاة الأزرار */
+.btn, .post-action-btn, .menu-item {
+    text-align: center !important;
+    justify-content: center !important;
+}
+    
+    .filter-select {
+        width: 100% !important;
+    }
+}
+
+/* إصلاح الحاويات */
+.container {
+    max-width: 100% !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+}
+
+.posts-container {
+    padding: 15px !important;
+}
+
+/* إصلاح الهيدر */
+.header {
+    padding: 12px 15px !important;
+}
+
+/* إصلاح الفلاتر */
+.filter-container {
+    padding: 15px !important;
+    background: #fff !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+/* إصلاح المشكلة في الصورة */
+.rank-avatar-container {
+    width: 50px !important;
+    height: 50px !important;
+    flex-shrink: 0 !important;
+}
+
+.rank-avatar {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+}
+
+/* إصلاح عرض الأسماء الطويلة */
+.user-name {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+    line-height: 1.2 !important;
+}
+
+/* إصلاح النصوص المتداخلة */
+.post-title {
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    color: var(--primary-color) !important;
+    margin-bottom: 8px !important;
+}
+
+/* منع العناصر من الخروج عن الحدود */
+* {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* تحسين عرض على الشاشات الصغيرة */
+@media (max-width: 480px) {
+    .post {
+        padding: 12px !important;
+        margin-bottom: 12px !important;
+        gap: 10px !important;
+    }
+    
+    .post-actions-new {
+        grid-template-columns: 1fr 1fr 1fr !important;
+        gap: 6px !important;
+    }
+    
+    .post-action-btn {
+        padding: 10px 6px !important;
+        font-size: 12px !important;
+        min-height: 40px !important;
+    }
+    
+    .post-action-btn span {
+        font-size: 11px !important;
+    }
+}
+
+/* إصلاح المحاذاة في الوضع المظلم */
+[data-theme="dark"] .post,
+[data-theme="dark"] .post-description,
+[data-theme="dark"] .user-name {
+    text-align: right !important;
+    direction: rtl !important;
+}
+
+/* إصلاح عرض الروابط */
+a, button {
+    text-decoration: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+/* تحسين تجربة اللمس */
+.post-action-btn, .btn, .menu-item {
+    touch-action: manipulation !important;
+    min-height: 44px !important;
+    min-width: 44px !important;
+}
+
+/* إصلاح حاوية الذكاء الاصطناعي - إزالة الإطار */
+.chat-container {
+    display: flex !important;
+    flex-direction: column !important;
+    height: calc(100vh - 140px) !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    background: transparent !important; /* تغيير من #fff إلى transparent */
+    border-radius: 0 !important; /* إزالة الزوايا المستديرة */
+    overflow: hidden !important;
+    box-shadow: none !important; /* إزالة الظل */
+    border: none !important; /* إزالة الحدود */
+}
+
+[data-theme="dark"] .chat-container {
+    background: transparent !important; /* شفاف في الوضع المظلم */
+}
+
+/* إصلاح هيدر المحادثة */
+.chat-header {
+    padding: 15px 0 !important; /* تقليل الـ padding */
+    background: transparent !important; /* شفاف */
+    color: var(--primary-color) !important; /* استخدام لون المظهر */
+    text-align: center !important;
+    font-weight: 900 !important;
+    font-size: 18px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-bottom: none !important; /* إزالة الحد السفلي */
+}
+
+/* إصلاح منطقة الرسائل */
+.chat-messages {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    padding: 15px 0 !important; /* إزالة padding الجانبي */
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    background: transparent !important; /* شفاف */
+}
+
+/* إصلاح حاوية إدخال النص */
+.chat-input-container {
+    padding: 15px 0 !important; /* إزالة padding الجانبي */
+    border-top: 1px solid var(--border-color) !important; /* خط فاصل رفيع */
+    background: transparent !important; /* شفاف */
+    display: flex !important;
+    gap: 10px !important;
+    align-items: center !important;
+    margin-top: 10px !important;
+}
+
+[data-theme="dark"] .chat-input-container {
+    background: transparent !important;
+    border-color: var(--border-color) !important;
+}
+
+/* إصلاح حقل الإدخال */
+#chat-input {
+    flex: 1 !important;
+    padding: 12px 15px !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 25px !important;
+    font-size: 14px !important;
+    background: var(--secondary-color) !important;
+    color: var(--text-color) !important;
+}
+
+[data-theme="dark"] #chat-input {
+    background: var(--secondary-color) !important;
+    color: var(--text-color) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* زر الإرسال */
+#send-chat-btn {
+    background: linear-gradient(135deg, #4a6bff, #6a11cb) !important;
+    color: white !important;
+    border: none !important;
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+}
+
+/* زر حذف المحادثة */
+.delete-chat-btn {
+    background: var(--secondary-color) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color) !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    font-size: 14px !important;
+}
+
+.delete-chat-btn:hover {
+    background: var(--primary-color) !important;
+    color: white !important;
+    transform: scale(1.1) !important;
+}
+
+/* رسالة المستخدم */
+.user-message {
+    background: linear-gradient(135deg, #4a6bff, #6a11cb) !important;
+    color: white !important;
+    align-self: flex-end !important;
+    border-radius: 18px 18px 4px 18px !important;
+    margin-left: auto !important;
+    box-shadow: 0 2px 8px rgba(74, 107, 255, 0.2) !important;
+    max-width: 85% !important;
+    padding: 14px 18px !important;
+    margin-bottom: 12px !important;
+    line-height: 1.6 !important;
+    font-size: 15px !important;
+    border: none !important; /* إزالة أي حدود */
+}
+
+/* رسالة الذكاء الاصطناعي */
+.ai-message {
+    background: var(--secondary-color) !important;
+    color: var(--text-color) !important;
+    align-self: flex-start !important;
+    border-radius: 18px 18px 18px 4px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    max-width: 85% !important;
+    padding: 14px 18px !important;
+    margin-bottom: 12px !important;
+    line-height: 1.6 !important;
+    font-size: 15px !important;
+    border: none !important; /* إزالة أي حدود */
+}
+
+[data-theme="dark"] .ai-message {
+    background: var(--secondary-color) !important;
+    color: var(--text-color) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* مؤشر الكتابة */
+.typing-indicator {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    padding: 12px 16px !important;
+    background: var(--secondary-color) !important;
+    border-radius: 18px !important;
+    width: fit-content !important;
+    border-radius: 18px 18px 18px 4px !important;
+    margin-bottom: 8px !important;
+    max-width: 85% !important;
+    border: none !important; /* إزالة أي حدود */
+}
+
+[data-theme="dark"] .typing-indicator {
+    background: var(--secondary-color) !important;
+}
+
+/* تحسين رأس صفحة الذكاء الاصطناعي */
+#study-ai-page .header {
+    padding: 12px 0 !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    margin-bottom: 15px !important;
+    background: transparent !important;
+}
+
+#study-ai-page .header span {
+    font-weight: 900 !important;
+    color: var(--primary-color) !important;
+}
+
+/* زر العودة */
+#study-ai-page .header .btn-secondary {
+    background: var(--secondary-color) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+#study-ai-page .header .btn-secondary:hover {
+    background: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* تأثيرات Hover محسنة */
+.user-message:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(74, 107, 255, 0.3) !important;
+}
+
+.ai-message:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+#send-chat-btn:hover:not(:disabled) {
+    transform: scale(1.1) !important;
+    box-shadow: 0 4px 12px rgba(74, 107, 255, 0.3) !important;
+}
+
+#chat-input:focus {
+    outline: none !important;
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 2px rgba(74, 107, 255, 0.1) !important;
+}
+
+/* أنماط عرض وإدارة الأوامر والمعلومات */
+.commands-management-container {
+    padding: 20px;
+}
+
+.commands-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.commands-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.command-item {
+    background: var(--secondary-color);
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.command-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.command-content {
+    color: var(--text-color);
+    line-height: 1.6;
+    margin-bottom: 10px;
+    padding-right: 30px;
+}
+
+.command-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--light-text);
+}
+
+.command-type {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 11px;
+}
+
+.command-type.command {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.command-type.knowledge {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    color: #000;
+}
+
+.delete-command-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(220, 53, 69, 0.2);
+    color: var(--danger-color);
+    border: 1px solid var(--danger-color);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 12px;
+}
+
+.delete-command-btn:hover {
+    background: var(--danger-color);
+    color: white;
+    transform: scale(1.1);
+}
+
+.empty-commands {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--light-text);
+}
+
+.empty-commands i {
+    font-size: 48px;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.loading-commands {
+    text-align: center;
+    padding: 30px;
+}
+
+.loading-commands .spinner {
+    width: 30px;
+    height: 30px;
+    border: 3px solid var(--border-color);
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* تنسيقات خاصة للتعليم الذكاء الاصطناعي */
+.teaching-card .commands-list {
+    max-height: 300px;
+    margin-top: 20px;
+}
+
+.teaching-card .commands-header {
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
   </style>
 
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -3240,6 +3748,20 @@
                     <button class="btn btn-success" onclick="saveAICommand()" style="flex: 1;">
                         <i class="fas fa-save"></i> حفظ الأمر
                     </button>
+                    <button class="btn btn-info" onclick="loadAICommands()" style="flex: 1;">
+                        <i class="fas fa-sync"></i> تحديث القائمة
+                    </button>
+                </div>
+            </div>
+            
+            <!-- قسم عرض الأوامر -->
+            <div id="commands-list-section" style="margin-top: 30px; display: none;">
+                <div class="commands-header">
+                    <h3 style="margin: 0; color: white;">الأوامر المحفوظة</h3>
+                    <span id="commands-count" style="background: rgba(255,255,255,0.3); padding: 4px 12px; border-radius: 20px; font-weight: 700;">0 أمر</span>
+                </div>
+                <div id="commands-list" class="commands-list">
+                    <!-- سيتم تعبئته بالجافاسكريبت -->
                 </div>
             </div>
         </div>
@@ -3253,6 +3775,45 @@
                     <button class="btn btn-success" onclick="saveAIKnowledge()" style="flex: 1;">
                         <i class="fas fa-save"></i> حفظ المعلومة
                     </button>
+                    <button class="btn btn-info" onclick="loadAIKnowledge()" style="flex: 1;">
+                        <i class="fas fa-sync"></i> تحديث القائمة
+                    </button>
+                </div>
+            </div>
+            
+            <!-- قسم عرض المعلومات -->
+            <div id="knowledge-list-section" style="margin-top: 30px; display: none;">
+                <div class="commands-header">
+                    <h3 style="margin: 0; color: #000;">المعلومات المحفوظة</h3>
+                    <span id="knowledge-count" style="background: rgba(0,0,0,0.2); padding: 4px 12px; border-radius: 20px; font-weight: 700;">0 معلومة</span>
+                </div>
+                <div id="knowledge-list" class="commands-list">
+                    <!-- سيتم تعبئته بالجافاسكريبت -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- قسم إدارة كل الأوامر والمعلومات -->
+        <div class="teaching-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin-top: 20px;">
+            <h2 style="margin-bottom: 15px; text-align: center;">إدارة جميع الأوامر والمعلومات</h2>
+            
+            <div class="teaching-buttons" style="justify-content: center; gap: 10px; margin-bottom: 20px;">
+                <button class="btn btn-warning" onclick="loadAllAICommands()">
+                    <i class="fas fa-list"></i> عرض الكل
+                </button>
+                <button class="btn btn-danger" onclick="deleteAllAICommandsWithConfirmation()">
+                    <i class="fas fa-trash"></i> حذف الكل
+                </button>
+            </div>
+            
+            <!-- قسم عرض كل الأوامر والمعلومات -->
+            <div id="all-commands-section" style="display: none;">
+                <div class="commands-header">
+                    <h3 style="margin: 0; color: white;">جميع الأوامر والمعلومات</h3>
+                    <span id="all-commands-count" style="background: rgba(255,255,255,0.3); padding: 4px 12px; border-radius: 20px; font-weight: 700;">0 عنصر</span>
+                </div>
+                <div id="all-commands-list" class="commands-list">
+                    <!-- سيتم تعبئته بالجافاسكريبت -->
                 </div>
             </div>
         </div>
@@ -3767,8 +4328,16 @@ async function login() {
   try {
     updateLoadingText('جاري تسجيل الدخول...');
     await auth.signInWithEmailAndPassword(email, password);
+    
+    // ✅ تمت إضافة هذا السطر: إعادة تعيين الزر بعد النجاح
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.innerHTML = originalText;
+    }, 1000);
+    
   } catch (error) {
     handleAuthError(error);
+    // ✅ تمت إضافة هذا السطر: إعادة تعيين الزر عند الخطأ
     btn.disabled = false;
     btn.innerHTML = originalText;
   }
@@ -8238,6 +8807,486 @@ async function markAllSupportAsRead() {
     btn.disabled = false;
     btn.innerHTML = originalText;
   }
+}
+
+// دالة محسنة لجلب الأوامر والمعلومات مع معرف المستند
+async function getAICommandsAndKnowledgeWithIds() {
+    try {
+        const snapshot = await db.collection('aiCommands')
+            .orderBy('createdAt', 'desc')
+            .limit(50) // زيادة الحد
+            .get();
+        
+        if (snapshot.empty) {
+            return {
+                commands: [],
+                knowledge: [],
+                allItems: []
+            };
+        }
+        
+        const commands = [];
+        const knowledge = [];
+        const allItems = [];
+        
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const item = {
+                id: doc.id,
+                ...data,
+                createdAt: data.createdAt?.toDate?.() || new Date()
+            };
+            
+            if (data.type === 'command' && data.command) {
+                commands.push(item);
+            } else if (data.type === 'knowledge' && data.knowledge) {
+                knowledge.push(item);
+            }
+            
+            allItems.push(item);
+        });
+        
+        return {
+            commands,
+            knowledge,
+            allItems
+        };
+    } catch (error) {
+        console.error('Error fetching AI commands/knowledge:', error);
+        return {
+            commands: [],
+            knowledge: [],
+            allItems: []
+        };
+    }
+}
+
+// دالة لعرض الأوامر
+async function loadAICommands() {
+    if (!isOwner()) return;
+    
+    const commandsSection = document.getElementById('commands-list-section');
+    const commandsList = document.getElementById('commands-list');
+    const commandsCount = document.getElementById('commands-count');
+    
+    if (!commandsSection || !commandsList) return;
+    
+    commandsList.innerHTML = `
+        <div class="loading-commands">
+            <div class="spinner"></div>
+            <p>جاري تحميل الأوامر...</p>
+        </div>
+    `;
+    
+    commandsSection.style.display = 'block';
+    
+    try {
+        const data = await getAICommandsAndKnowledgeWithIds();
+        
+        if (data.commands.length === 0) {
+            commandsList.innerHTML = `
+                <div class="empty-commands">
+                    <i class="fas fa-robot"></i>
+                    <p>لا توجد أوامر محفوظة</p>
+                </div>
+            `;
+            commandsCount.textContent = '0 أمر';
+            return;
+        }
+        
+        commandsList.innerHTML = data.commands.map(item => {
+            const time = formatRelativeTime(item.createdAt);
+            const addedBy = item.addedByName || 'غير معروف';
+            
+            return `
+                <div class="command-item" data-id="${item.id}">
+                    <button class="delete-command-btn" onclick="deleteAICommand('${item.id}')" title="حذف الأمر">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    
+                    <div class="command-content">
+                        ${escapeHTML(item.command || '')}
+                    </div>
+                    
+                    <div class="command-meta">
+                        <span class="command-type command">أمر</span>
+                        <div style="text-align: left;">
+                            <small>أضيف بواسطة: ${escapeHTML(addedBy)}</small><br>
+                            <small>${time}</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        commandsCount.textContent = `${data.commands.length} أمر`;
+        
+        showNotification(`تم تحميل ${data.commands.length} أمر`);
+        
+    } catch (error) {
+        console.error('Error loading AI commands:', error);
+        commandsList.innerHTML = `
+            <div class="empty-commands">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>خطأ في تحميل الأوامر</p>
+                <button class="btn btn-xs" onclick="loadAICommands()" style="margin-top: 10px;">
+                    <i class="fas fa-redo"></i> إعادة المحاولة
+                </button>
+            </div>
+        `;
+    }
+}
+
+// دالة لعرض المعلومات
+async function loadAIKnowledge() {
+    if (!isOwner()) return;
+    
+    const knowledgeSection = document.getElementById('knowledge-list-section');
+    const knowledgeList = document.getElementById('knowledge-list');
+    const knowledgeCount = document.getElementById('knowledge-count');
+    
+    if (!knowledgeSection || !knowledgeList) return;
+    
+    knowledgeList.innerHTML = `
+        <div class="loading-commands">
+            <div class="spinner"></div>
+            <p>جاري تحميل المعلومات...</p>
+        </div>
+    `;
+    
+    knowledgeSection.style.display = 'block';
+    
+    try {
+        const data = await getAICommandsAndKnowledgeWithIds();
+        
+        if (data.knowledge.length === 0) {
+            knowledgeList.innerHTML = `
+                <div class="empty-commands">
+                    <i class="fas fa-brain"></i>
+                    <p>لا توجد معلومات محفوظة</p>
+                </div>
+            `;
+            knowledgeCount.textContent = '0 معلومة';
+            return;
+        }
+        
+        knowledgeList.innerHTML = data.knowledge.map(item => {
+            const time = formatRelativeTime(item.createdAt);
+            const addedBy = item.addedByName || 'غير معروف';
+            
+            return `
+                <div class="command-item" data-id="${item.id}">
+                    <button class="delete-command-btn" onclick="deleteAICommand('${item.id}')" title="حذف المعلومة">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    
+                    <div class="command-content">
+                        ${escapeHTML(item.knowledge || '')}
+                    </div>
+                    
+                    <div class="command-meta">
+                        <span class="command-type knowledge">معلومة</span>
+                        <div style="text-align: left;">
+                            <small>أضيف بواسطة: ${escapeHTML(addedBy)}</small><br>
+                            <small>${time}</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        knowledgeCount.textContent = `${data.knowledge.length} معلومة`;
+        
+        showNotification(`تم تحميل ${data.knowledge.length} معلومة`);
+        
+    } catch (error) {
+        console.error('Error loading AI knowledge:', error);
+        knowledgeList.innerHTML = `
+            <div class="empty-commands">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>خطأ في تحميل المعلومات</p>
+                <button class="btn btn-xs" onclick="loadAIKnowledge()" style="margin-top: 10px;">
+                    <i class="fas fa-redo"></i> إعادة المحاولة
+                </button>
+            </div>
+        `;
+    }
+}
+
+// دالة لعرض كل الأوامر والمعلومات
+async function loadAllAICommands() {
+    if (!isOwner()) return;
+    
+    const allSection = document.getElementById('all-commands-section');
+    const allList = document.getElementById('all-commands-list');
+    const allCount = document.getElementById('all-commands-count');
+    
+    if (!allSection || !allList) return;
+    
+    allList.innerHTML = `
+        <div class="loading-commands">
+            <div class="spinner"></div>
+            <p>جاري تحميل جميع البيانات...</p>
+        </div>
+    `;
+    
+    allSection.style.display = 'block';
+    
+    try {
+        const data = await getAICommandsAndKnowledgeWithIds();
+        
+        if (data.allItems.length === 0) {
+            allList.innerHTML = `
+                <div class="empty-commands">
+                    <i class="fas fa-database"></i>
+                    <p>لا توجد بيانات محفوظة</p>
+                </div>
+            `;
+            allCount.textContent = '0 عنصر';
+            return;
+        }
+        
+        allList.innerHTML = data.allItems.map(item => {
+            const time = formatRelativeTime(item.createdAt);
+            const addedBy = item.addedByName || 'غير معروف';
+            const isCommand = item.type === 'command';
+            const content = isCommand ? item.command : item.knowledge;
+            
+            return `
+                <div class="command-item" data-id="${item.id}">
+                    <button class="delete-command-btn" onclick="deleteAICommand('${item.id}')" 
+                            title="حذف ${isCommand ? 'الأمر' : 'المعلومة'}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    
+                    <div class="command-content">
+                        ${escapeHTML(content || '')}
+                    </div>
+                    
+                    <div class="command-meta">
+                        <span class="command-type ${isCommand ? 'command' : 'knowledge'}">
+                            ${isCommand ? 'أمر' : 'معلومة'}
+                        </span>
+                        <div style="text-align: left;">
+                            <small>أضيف بواسطة: ${escapeHTML(addedBy)}</small><br>
+                            <small>${time}</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        allCount.textContent = `${data.allItems.length} عنصر`;
+        
+        showNotification(`تم تحميل ${data.allItems.length} عنصر`);
+        
+    } catch (error) {
+        console.error('Error loading all AI data:', error);
+        allList.innerHTML = `
+            <div class="empty-commands">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>خطأ في تحميل البيانات</p>
+                <button class="btn btn-xs" onclick="loadAllAICommands()" style="margin-top: 10px;">
+                    <i class="fas fa-redo"></i> إعادة المحاولة
+                </button>
+            </div>
+        `;
+    }
+}
+
+// دالة لحذف أمر أو معلومة
+async function deleteAICommand(commandId) {
+    if (!isOwner()) return;
+    
+    if (!confirm('هل أنت متأكد من حذف هذا العنصر؟')) return;
+    
+    try {
+        await db.collection('aiCommands').doc(commandId).delete();
+        
+        // إزالة العنصر من الواجهة
+        const element = document.querySelector(`[data-id="${commandId}"]`);
+        if (element) {
+            element.style.opacity = '0.5';
+            element.style.transform = 'translateX(-20px)';
+            setTimeout(() => {
+                element.remove();
+            }, 300);
+        }
+        
+        // تحديث العداد
+        updateAICommandsCount();
+        
+        showNotification('تم حذف العنصر بنجاح');
+        
+    } catch (error) {
+        console.error('Error deleting AI command:', error);
+        showNotification('فشل حذف العنصر', 'error');
+    }
+}
+
+// دالة لحذف كل الأوامر والمعلومات
+async function deleteAllAICommands() {
+    if (!isOwner()) return;
+    
+    try {
+        const snapshot = await db.collection('aiCommands').get();
+        
+        if (snapshot.empty) {
+            showNotification('لا توجد عناصر للحذف', 'info');
+            return;
+        }
+        
+        const batch = db.batch();
+        let count = 0;
+        
+        snapshot.forEach(doc => {
+            batch.delete(doc.ref);
+            count++;
+        });
+        
+        await batch.commit();
+        
+        // إخفاء الأقسام
+        document.getElementById('commands-list-section').style.display = 'none';
+        document.getElementById('knowledge-list-section').style.display = 'none';
+        document.getElementById('all-commands-section').style.display = 'none';
+        
+        showNotification(`تم حذف ${count} عنصر بنجاح`);
+        
+    } catch (error) {
+        console.error('Error deleting all AI commands:', error);
+        showNotification('فشل حذف العناصر', 'error');
+    }
+}
+
+// دالة تأكيد حذف كل الأوامر
+function deleteAllAICommandsWithConfirmation() {
+    if (!isOwner()) return;
+    
+    openConfirmationModal(
+        'حذف جميع البيانات',
+        'هل أنت متأكد من حذف جميع الأوامر والمعلومات؟ هذا الإجراء لا يمكن التراجع عنه.',
+        async function() {
+            await deleteAllAICommands();
+        }
+    );
+}
+
+// دالة تحديث العداد
+function updateAICommandsCount() {
+    if (!isOwner()) return;
+    
+    // يمكن تحديث هذا عند الحاجة
+    setTimeout(() => {
+        loadAICommands();
+        loadAIKnowledge();
+        loadAllAICommands();
+    }, 1000);
+}
+
+// تحديث دالة حفظ الأمر لتحديث القائمة بعد الحفظ
+async function saveAICommand() {
+    if (!isOwner()) return;
+    
+    const commandInput = document.getElementById('command-input');
+    const command = commandInput.value.trim();
+    
+    if (!command) {
+        showNotification('يرجى كتابة الأمر', 'error');
+        return;
+    }
+    
+    const btn = document.querySelector('#command-input').nextElementSibling;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...';
+    
+    try {
+        await db.collection('aiCommands').add({
+            command: command,
+            type: 'command',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            addedBy: currentUser.uid,
+            addedByName: currentUser.name
+        });
+        
+        commandInput.value = '';
+        showNotification('تم حفظ الأمر بنجاح');
+        
+        // ✅ تحديث القائمة بعد الحفظ
+        setTimeout(() => {
+            loadAICommands();
+        }, 500);
+        
+    } catch (error) {
+        console.error('Error saving AI command:', error);
+        showNotification('فشل حفظ الأمر', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> حفظ الأمر';
+    }
+}
+
+// تحديث دالة حفظ المعلومة لتحديث القائمة بعد الحفظ
+async function saveAIKnowledge() {
+    if (!isOwner()) return;
+    
+    const knowledgeInput = document.getElementById('knowledge-input');
+    const knowledge = knowledgeInput.value.trim();
+    
+    if (!knowledge) {
+        showNotification('يرجى كتابة المعلومة', 'error');
+        return;
+    }
+    
+    const btn = document.querySelector('#knowledge-input').nextElementSibling;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...';
+    
+    try {
+        await db.collection('aiCommands').add({
+            knowledge: knowledge,
+            type: 'knowledge',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            addedBy: currentUser.uid,
+            addedByName: currentUser.name
+        });
+        
+        knowledgeInput.value = '';
+        showNotification('تم حفظ المعلومة بنجاح');
+        
+        // ✅ تحديث القائمة بعد الحفظ
+        setTimeout(() => {
+            loadAIKnowledge();
+        }, 500);
+        
+    } catch (error) {
+        console.error('Error saving AI knowledge:', error);
+        showNotification('فشل حفظ المعلومة', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> حفظ المعلومة';
+    }
+}
+
+// تحديث دالة getAICommandsAndKnowledge
+async function getAICommandsAndKnowledge() {
+    const data = await getAICommandsAndKnowledgeWithIds();
+    return {
+        commands: data.commands.map(item => item.command),
+        knowledge: data.knowledge.map(item => item.knowledge)
+    };
+}
+
+// دالة لتحميل البيانات تلقائياً عند فتح الصفحة
+function showTeachingAIPage() {
+  if (!isOwner()) return showNotification('للمالك فقط', 'error');
+  showPage("teaching-ai-page");
+  
+  // تحميل البيانات تلقائياً بعد 1 ثانية
+  setTimeout(() => {
+    loadAICommands();
+    loadAIKnowledge();
+  }, 1000);
 }
 
 </script>
