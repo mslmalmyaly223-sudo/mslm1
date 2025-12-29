@@ -2414,6 +2414,52 @@
   }
 }
 
+/* أضف هذا في قسم الـ CSS في الأعلى (داخل <style>) */
+
+@keyframes pulse {
+  0%, 100% { 
+    transform: scale(1); 
+    box-shadow: 0 2px 10px rgba(255, 59, 59, 0.5);
+  }
+  50% { 
+    transform: scale(1.1); 
+    box-shadow: 0 2px 15px rgba(255, 59, 59, 0.7);
+  }
+}
+
+@keyframes pulse-admin {
+  0%, 100% { 
+    transform: scale(1); 
+    box-shadow: 0 2px 8px rgba(255, 59, 59, 0.6);
+  }
+  50% { 
+    transform: scale(1.15); 
+    box-shadow: 0 3px 12px rgba(255, 59, 59, 0.8);
+  }
+}
+
+.nav-badge {
+  animation: pulse 2s infinite !important;
+}
+
+.nav-badge.admin-badge {
+  animation: pulse-admin 1.5s infinite !important;
+}
+
+.nav-badge.support-badge {
+  animation: pulse 2s infinite !important;
+}
+
+/* تحسين ظهور الفقاعات */
+.menu-item {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.menu-item:hover {
+  transform: translateY(-2px);
+}
+
   </style>
 
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -2601,9 +2647,17 @@
   </div>
 
   <div id="inbox-page" class="container page" style="display:none">
-    <div class="header"><button class="btn btn-secondary" onclick="backToProfile()"><i class="fas fa-arrow-right"></i></button><span style="font-weight:900">البريد الوارد</span></div>
-    <div class="posts-container" id="inbox-container"></div>
+  <div class="header">
+    <button class="btn btn-secondary" onclick="backToProfile()">
+      <i class="fas fa-arrow-right"></i>
+    </button>
+    <span style="font-weight:900">البريد الوارد</span>
+    <button id="mark-all-read-btn" class="btn btn-success btn-xs" onclick="markAllNotificationsAsRead()" style="margin-right: auto;">
+      <i class="fas fa-check-double"></i> قراءة الكل
+    </button>
   </div>
+  <div class="posts-container" id="inbox-container"></div>
+</div>
 
   <div id="details-page" class="container page" style="display:none">
     <div class="header"><button class="btn btn-secondary" onclick="backToMainFromDetails()"><i class="fas fa-arrow-right"></i></button><span style="font-weight:900">تفاصيل المنشور</span></div>
@@ -2731,18 +2785,23 @@
   </div>
 
   <div id="user-support-page" class="container page" style="display:none">
-    <div class="header">
-      <button class="btn btn-secondary" onclick="backToAdminPanel()"><i class="fas fa-arrow-right"></i></button>
-      <span style="font-weight:900">الرد على المستخدمين</span>
-    </div>
-    <div class="user-support-page" id="user-support-container">
-      <div id="user-support-results">
-        <div class="post">
-          <p style="text-align: center; color: var(--text-color);">جاري تحميل طلبات المستخدمين...</p>
-        </div>
+  <div class="header">
+    <button class="btn btn-secondary" onclick="backToAdminPanel()">
+      <i class="fas fa-arrow-right"></i>
+    </button>
+    <span style="font-weight:900">الرد على المستخدمين</span>
+    <button id="mark-support-read-btn" class="btn btn-success btn-xs" onclick="markAllSupportAsRead()" style="margin-right: auto;">
+      <i class="fas fa-check-double"></i> قراءة الكل
+    </button>
+  </div>
+  <div class="user-support-page" id="user-support-container">
+    <div id="user-support-results">
+      <div class="post">
+        <p style="text-align: center; color: var(--text-color);">جاري تحميل طلبات الدعم...</p>
       </div>
     </div>
   </div>
+</div>
 
 <div id="bottom-nav" class="bottom-nav" style="display: none;">
     <div class="nav-item active" data-page="main" onclick="showMainPageAndClearBadge();">
@@ -3938,6 +3997,88 @@ function updateUIForLoggedInUser() {
   updateCreateButton();
   updatePostCountInProfile();
   updateNavBadges();
+  
+  // إضافة هذا الجزء الجديد بالكامل
+  if (isOwner()) {
+    // إنشاء الفقاعات الخاصة بالتحكم إذا لم تكن موجودة
+    setTimeout(() => {
+      createAdminBadges();
+      // تحميل عدد طلبات الدعم فوراً
+      calculateSupportRequests();
+      // تحديث دوري كل 30 ثانية
+      setInterval(calculateSupportRequests, 30000);
+    }, 1000);
+  }
+}
+
+function createAdminBadges() {
+  if (!isOwner()) return;
+  
+  // فقاعة لوحة التحكم
+  const adminMenuItem = document.querySelector('.menu-item[onclick="showAdminPanel()"]');
+  if (adminMenuItem && !document.getElementById('admin-panel-badge')) {
+    const adminBadge = document.createElement('div');
+    adminBadge.id = 'admin-panel-badge';
+    adminBadge.className = 'nav-badge admin-badge';
+    adminBadge.style.display = 'none';
+    adminBadge.style.position = 'absolute';
+    adminBadge.style.top = '-5px';
+    adminBadge.style.left = '-5px';
+    adminBadge.style.background = 'linear-gradient(135deg, #ff3b3b, #ff6b6b)';
+    adminBadge.style.color = 'white';
+    adminBadge.style.borderRadius = '50%';
+    adminBadge.style.width = '20px';
+    adminBadge.style.height = '20px';
+    adminBadge.style.fontSize = '11px';
+    adminBadge.style.fontWeight = 'bold';
+    adminBadge.style.display = 'none';
+    adminBadge.style.alignItems = 'center';
+    adminBadge.style.justifyContent = 'center';
+    adminBadge.style.border = '2px solid #fff';
+    adminBadge.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+    adminBadge.style.animation = 'pulse 2s infinite';
+    adminBadge.style.zIndex = '10';
+    
+    // إضافة الـ badge إلى عنصر القائمة
+    adminMenuItem.style.position = 'relative';
+    adminMenuItem.appendChild(adminBadge);
+  }
+  
+  // فقاعة "الرد على المستخدمين"
+  const supportMenuItem = document.querySelector('.menu-item[onclick="showUserSupportPage()"]');
+  if (supportMenuItem && !document.getElementById('user-support-badge')) {
+    const supportBadge = document.createElement('div');
+    supportBadge.id = 'user-support-badge';
+    supportBadge.className = 'nav-badge support-badge';
+    supportBadge.style.display = 'none';
+    supportBadge.style.position = 'absolute';
+    supportBadge.style.top = '-5px';
+    supportBadge.style.left = '-5px';
+    supportBadge.style.background = 'linear-gradient(135deg, #ff6b6b, #ff8e6b)';
+    supportBadge.style.color = 'white';
+    supportBadge.style.borderRadius = '50%';
+    supportBadge.style.width = '20px';
+    supportBadge.style.height = '20px';
+    supportBadge.style.fontSize = '11px';
+    supportBadge.style.fontWeight = 'bold';
+    supportBadge.style.display = 'none';
+    supportBadge.style.alignItems = 'center';
+    supportBadge.style.justifyContent = 'center';
+    supportBadge.style.border = '2px solid #fff';
+    supportBadge.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+    supportBadge.style.animation = 'pulse 2s infinite';
+    supportBadge.style.zIndex = '10';
+    
+    // إضافة الـ badge إلى عنصر القائمة
+    supportMenuItem.style.position = 'relative';
+    supportMenuItem.appendChild(supportBadge);
+  }
+  
+  // فقاعة "حسابي" (مجموع كل الإشعارات)
+  const profileBadge = document.getElementById('profile-notification-badge');
+  if (profileBadge) {
+    profileBadge.style.background = 'linear-gradient(135deg, #4a6bff, #6a11cb)';
+  }
 }
 
 function updateUIForLoggedOutUser() {
@@ -5264,7 +5405,7 @@ async function openCommentsPage(postId) {
   await renderComments(postId);
 }
 
-async function renderCommentsWithCache(postId) {
+async function renderCommentsWithCache(postId, forceRefresh = false) {
   const container = document.getElementById("comments-list-page");
   if (!container) return;
   
@@ -5272,21 +5413,55 @@ async function renderCommentsWithCache(postId) {
     const cacheKey = `comments_${postId}`;
     const cacheTime = `comments_time_${postId}`;
     const now = Date.now();
-    const cacheExpiry = 2 * 60 * 1000;
-    
-    const cachedComments = localStorage.getItem(cacheKey);
-    const cacheTimestamp = localStorage.getItem(cacheTime);
+    const cacheExpiry = 30 * 1000; // 30 ثانية فقط للتعليقات
     
     let comments = [];
+    let fromCache = false;
     
-    if (cachedComments && cacheTimestamp && (now - parseInt(cacheTimestamp)) < cacheExpiry) {
-      comments = JSON.parse(cachedComments);
-      container.innerHTML = renderCommentsHTML(comments);
-    } else {
-      container.innerHTML = '<div class="post"><p>جاري تحميل التعليقات...</p></div>';
+    // إذا لم نكن نريد تحديث قسري، جرب الكاش أولاً
+    if (!forceRefresh) {
+      const cachedComments = localStorage.getItem(cacheKey);
+      const cacheTimestamp = localStorage.getItem(cacheTime);
       
+      if (cachedComments && cacheTimestamp && (now - parseInt(cacheTimestamp)) < cacheExpiry) {
+        comments = JSON.parse(cachedComments);
+        fromCache = true;
+        container.innerHTML = renderCommentsHTML(comments);
+        
+        // عرض رسالة تحديث خفيفة
+        if (comments.length > 0) {
+          container.insertAdjacentHTML('afterbegin', `
+            <div class="post" style="background: var(--sky); border-left: 4px solid var(--warning-color); margin-bottom: 10px;">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <i class="fas fa-sync-alt fa-spin" style="color: var(--warning-color);"></i>
+                  <small style="color: var(--text-color);">يتم تحديث التعليقات...</small>
+                </div>
+                <button onclick="refreshComments('${postId}')" class="btn btn-xs" style="padding: 4px 8px;">
+                  تحديث الآن
+                </button>
+              </div>
+            </div>
+          `);
+        }
+      }
+    }
+    
+    // جلب البيانات الحقيقية
+    if (!fromCache || forceRefresh) {
+      if (!forceRefresh) {
+        container.innerHTML = `
+          <div class="post" style="text-align: center; padding: 30px;">
+            <div class="spinner" style="width: 30px; height: 30px; border: 3px solid var(--border-color); border-top: 3px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
+            <p>جاري تحميل التعليقات...</p>
+          </div>
+        `;
+      }
+      
+      // استخدام جلب سريع مع limit مناسب
       const snap = await db.collection("posts").doc(postId).collection("comments")
-        .orderBy("createdAt", "asc")
+        .orderBy("createdAt", "desc") // تغيير إلى desc لأحدث التعليقات أولاً
+        .limit(50)
         .get();
       
       if (snap.empty) {
@@ -5296,17 +5471,111 @@ async function renderCommentsWithCache(postId) {
         return;
       }
       
-      comments = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      comments = snap.docs.map(doc => ({ 
+        id: doc.id, 
+        ...doc.data(),
+        docRef: doc.ref
+      })).reverse(); // عكس الترتيب لعرض الأقدم أولاً
       
+      // تحديث الكاش
       localStorage.setItem(cacheKey, JSON.stringify(comments));
       localStorage.setItem(cacheTime, now.toString());
+      
+      // إضافة listener للتحديثات المباشرة
+      startCommentsListener(postId, comments);
       
       container.innerHTML = renderCommentsHTML(comments);
     }
     
+    // جلب التحديثات في الخلفية
+    if (fromCache) {
+      setTimeout(async () => {
+        try {
+          const freshSnap = await db.collection("posts").doc(postId).collection("comments")
+            .orderBy("createdAt", "desc")
+            .limit(50)
+            .get();
+          
+          if (freshSnap.size > comments.length) {
+            const freshComments = freshSnap.docs.map(doc => ({ 
+              id: doc.id, 
+              ...doc.data() 
+            })).reverse();
+            
+            localStorage.setItem(cacheKey, JSON.stringify(freshComments));
+            localStorage.setItem(cacheTime, Date.now().toString());
+            
+            container.innerHTML = renderCommentsHTML(freshComments);
+          }
+        } catch (e) {
+          console.log('Background refresh failed:', e);
+        }
+      }, 2000);
+    }
+    
   } catch (e) {
     console.error('Error loading comments:', e);
-    container.innerHTML = '<div class="post"><p>خطأ في تحميل التعليقات.</p></div>';
+    container.innerHTML = `
+      <div class="post">
+        <p>خطأ في تحميل التعليقات.</p>
+        <button onclick="renderCommentsWithCache('${postId}', true)" class="btn" style="margin-top: 10px;">
+          <i class="fas fa-redo"></i> إعادة المحاولة
+        </button>
+      </div>
+    `;
+  }
+}
+
+// دالة مساعدة للتحديث
+async function refreshComments(postId) {
+  await renderCommentsWithCache(postId, true);
+}
+
+// listener للتحديثات المباشرة للتعليقات
+function startCommentsListener(postId, existingComments = []) {
+  if (!postId) return;
+  
+  try {
+    const lastCommentTime = existingComments.length > 0 
+      ? existingComments[existingComments.length - 1].createdAt 
+      : null;
+    
+    const unsubscribe = db.collection("posts").doc(postId).collection("comments")
+      .orderBy("createdAt", "desc")
+      .limit(1)
+      .onSnapshot((snapshot) => {
+        snapshot.docChanges().forEach(change => {
+          if (change.type === 'added') {
+            const newComment = { id: change.doc.id, ...change.doc.data() };
+            
+            // التحقق من عدم تكرار التعليق
+            const isDuplicate = existingComments.some(c => c.id === newComment.id);
+            
+            if (!isDuplicate && (!lastCommentTime || newComment.createdAt?.toDate?.() > lastCommentTime?.toDate?.())) {
+              // تحديث الكاش والعرض
+              const cacheKey = `comments_${postId}`;
+              const cachedComments = JSON.parse(localStorage.getItem(cacheKey) || '[]');
+              cachedComments.push(newComment);
+              localStorage.setItem(cacheKey, JSON.stringify(cachedComments));
+              localStorage.setItem(`comments_time_${postId}`, Date.now().toString());
+              
+              // تحديث العرض إذا كانت صفحة التعليقات مفتوحة
+              const container = document.getElementById("comments-list-page");
+              if (container && window.location.hash.includes('comments-page')) {
+                container.innerHTML = renderCommentsHTML(cachedComments);
+              }
+            }
+          }
+        });
+      }, (error) => {
+        console.error('Comments listener error:', error);
+      });
+    
+    // تخزين الـ unsubscribe للتنظيف لاحقاً
+    window.currentCommentsListener = unsubscribe;
+    
+  } catch (error) {
+    console.error('Error starting comments listener:', error);
   }
 }
 
@@ -5376,13 +5645,15 @@ async function addCommentFromPage() {
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
   
   try {
-    await db.collection("posts").doc(currentCommentsPostId).collection("comments").add({
+    // إضافة التعليق
+    const commentRef = await db.collection("posts").doc(currentCommentsPostId).collection("comments").add({
       text, 
       userId: currentUser.uid, 
       userName: currentUser.name,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
     
+    // تحديث العدد
     const postRef = db.collection("posts").doc(currentCommentsPostId);
     await postRef.update({
       commentsCount: firebase.firestore.FieldValue.increment(1)
@@ -5393,23 +5664,31 @@ async function addCommentFromPage() {
       posts[postIndex].commentsCount = (posts[postIndex].commentsCount || 0) + 1;
     }
     
+    // ✅ تم التعديل: منع إرسال إشعار إذا كان المالك هو المعلق
     const post = posts.find(p => p.id === currentCommentsPostId);
-    if (post && post.userId !== currentUser.uid) {
+    
+    // الشرط: إرسال إشعار فقط إذا:
+    // 1. المنشور ليس للمعلق (post.userId !== currentUser.uid)
+    // 2. والمعلق ليس المالك
+    if (post && post.userId !== currentUser.uid && !isOwner()) {
       await db.collection('inbox').add({
-        userId: post.userId,
+        userId: post.userId,  // فقط لصاحب المنشور
         type: 'comment_notification',
         title: '💬 تعليق جديد',
-        message: `تعليق جديد على منشورك من ${currentUser.name}: ${text.substring(0, 50)}${text.length > 50 ? '...' : ''}`,
+        message: `تعليق جديد على منشورك من ${currentUser.name}: "${text.substring(0, 50)}${text.length > 50 ? '...' : ''}"`,
         postId: currentCommentsPostId,
+        commentId: commentRef.id,
         status: 'unread',
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
     }
     
+    // ✅ تم التعديل: إرسال إشعارات الردود (مع استثناء المالك)
     await sendCommentReplyNotifications(currentCommentsPostId, text, currentUser.name);
     
     textInput.value = '';
     
+    // تحديث العرض مع الكاش الجديد
     await renderCommentsWithCache(currentCommentsPostId);
     
     showNotification('تم إرسال التعليق');
@@ -5455,14 +5734,35 @@ async function sendCommentReplyNotifications(postId, commentText, commenterName)
     commentsSnap.forEach(doc => {
       const comment = doc.data ? doc.data() : doc;
       if (comment.userName && commentText.includes(`@${comment.userName}`) && comment.userId !== currentUser.uid) {
+        // التأكد من أن المستخدم ليس المالك (لا نرسل إشعارات للمالك من الردود)
         mentionedUsers.add(comment.userId);
       }
     });
+    
+    // الحصول على معرف المالك
+    let ownerUid = null;
+    try {
+      const ownerQuery = await db.collection('users')
+        .where('email', '==', APP_OWNER_EMAIL)
+        .limit(1)
+        .get();
+      
+      if (!ownerQuery.empty) {
+        ownerUid = ownerQuery.docs[0].id;
+      }
+    } catch (error) {
+      console.error('Error getting owner UID:', error);
+    }
     
     const batch = db.batch();
     let notificationCount = 0;
     
     for (const userId of mentionedUsers) {
+      // إذا كان المستخدم هو المالك، تخطيه (لا نرسل إشعارات للمالك من الردود)
+      if (ownerUid && userId === ownerUid) {
+        continue;
+      }
+      
       if (notificationCount >= 10) break;
       
       const notificationRef = db.collection('inbox').doc();
@@ -5756,98 +6056,201 @@ async function editProfileName() {
 async function showInbox() {
   if (!currentUser) return showNotification('سجّل الدخول', 'warning');
   showPage('inbox');
-  await markAllNotificationsAsRead();
   
   if (!window.inboxContainer) return;
-  window.inboxContainer.innerHTML = '<div class="post"><p>جاري تحميل الرسائل...</p></div>';
+  
+  // إضافة مؤشر تحميل محسّن
+  window.inboxContainer.innerHTML = `
+    <div class="post" style="text-align: center; padding: 30px;">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+        <div class="spinner" style="width: 40px; height: 40px; border: 4px solid var(--border-color); border-top: 4px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        <style>
+          @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        </style>
+        <p style="color: var(--text-color); font-weight: 600;">جاري تحميل الرسائل...</p>
+      </div>
+    </div>
+  `;
   
   try {
+    // تحميل الكاش أولاً لسرعة العرض
+    const cacheKey = `inbox_cache_${currentUser.uid}`;
+    const cacheTime = `inbox_cache_time_${currentUser.uid}`;
+    const now = Date.now();
+    const cacheExpiry = 30 * 1000; // 30 ثانية فقط للتحديث السريع
+    
     let messages = [];
+    let fromCache = false;
+    
+    const cachedMessages = localStorage.getItem(cacheKey);
+    const cacheTimestamp = localStorage.getItem(cacheTime);
+    
+    if (cachedMessages && cacheTimestamp && (now - parseInt(cacheTimestamp)) < cacheExpiry) {
+      messages = JSON.parse(cachedMessages);
+      fromCache = true;
+      renderInboxMessages(messages, fromCache);
+    }
+    
+    // جلب البيانات الحقيقية من Firebase
+    let querySnapshot;
     
     if (isOwner()) {
-      const allMessages = await db.collection('inbox')
+      querySnapshot = await db.collection('inbox')
         .orderBy('createdAt', 'desc')
-        .limit(50)
+        .limit(100) // زيادة الحد ليشمل كل شيء
         .get();
       
-      messages = allMessages.docs
-        .filter(doc => doc.data().type === 'admin_report' || doc.data().type === 'support_request')
-        .sort((a, b) => (b.data().createdAt?.toDate?.() || 0) - (a.data().createdAt?.toDate?.() || 0));
+      messages = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        docRef: doc.ref // حفظ المرجع للاستخدام السريع لاحقاً
+      }));
     } else {
-      const userMessages = await db.collection('inbox')
+      querySnapshot = await db.collection('inbox')
         .where('userId', '==', currentUser.uid)
         .orderBy('createdAt', 'desc')
-        .limit(50)
+        .limit(100)
         .get();
       
-      messages = userMessages.docs
-        .filter(doc => doc.data().userId === currentUser.uid)
-        .sort((a, b) => (b.data().createdAt?.toDate?.() || 0) - (a.data().createdAt?.toDate?.() || 0));
+      messages = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        docRef: doc.ref
+      }));
     }
     
-    if (messages.length === 0) {
-      window.inboxContainer.innerHTML = '<div class="post"><p>لا توجد رسائل حالياً.</p></div>';
-      return;
+    // تحديث الكاش
+    localStorage.setItem(cacheKey, JSON.stringify(messages));
+    localStorage.setItem(cacheTime, now.toString());
+    
+    if (!fromCache || messages.length > 0) {
+      renderInboxMessages(messages, false);
     }
     
-    window.inboxContainer.innerHTML = messages.map(doc => {
-      const msg = doc.data();
-      const created = msg.createdAt?.toDate ? formatRelativeTime(msg.createdAt.toDate()) : '';
+    // تحديث حالة القراءة بعد العرض
+    await markAllNotificationsAsRead();
+    
+  } catch (error) {
+    console.error('Error loading inbox:', error);
+    window.inboxContainer.innerHTML = `
+      <div class="post" style="text-align: center;">
+        <p style="color: var(--danger-color);">خطأ في تحميل الرسائل</p>
+        <button onclick="showInbox()" class="btn" style="margin-top: 10px;">
+          <i class="fas fa-redo"></i> إعادة المحاولة
+        </button>
+      </div>
+    `;
+  }
+}
+
+function renderInboxMessages(messages, fromCache = false) {
+  if (!window.inboxContainer) return;
+  
+  if (messages.length === 0) {
+    window.inboxContainer.innerHTML = `
+      <div class="post" style="text-align: center; padding: 40px 20px;">
+        <i class="fas fa-inbox" style="font-size: 48px; color: var(--light-text); margin-bottom: 15px;"></i>
+        <p style="color: var(--text-color); font-size: 16px;">لا توجد رسائل حالياً</p>
+        <p style="color: var(--light-text); font-size: 14px; margin-top: 5px;">سيتم عرض الرسائل الجديدة هنا تلقائياً</p>
+      </div>
+    `;
+    return;
+  }
+  
+  let html = '';
+  
+  if (fromCache) {
+    html += `
+      <div class="post" style="background: var(--sky); border-left: 4px solid var(--warning-color); margin-bottom: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-sync-alt fa-spin" style="color: var(--warning-color);"></i>
+          <small style="color: var(--text-color);">يتم تحديث البيانات من الخادم...</small>
+        </div>
+      </div>
+    `;
+  }
+  
+  messages.forEach(msg => {
+    const created = msg.createdAt?.toDate ? formatRelativeTime(msg.createdAt.toDate()) : '';
+    const isUnread = msg.status === 'unread';
+    const isResolved = msg.status === 'resolved';
+    
+    // رسائل التعليقات والردود
+    if (msg.type === 'comment_reply' || msg.type === 'comment_notification') {
+      const postId = msg.postId || '';
+      const isCommentReply = msg.type === 'comment_reply';
       
-      if (isOwner() && (msg.type === 'admin_report' || msg.type === 'support_request')) {
-        if (msg.status === 'resolved') {
-          return `
-            <div class="post" style="opacity:0.7; background:#f8f9fa;">
-              <div style="font-weight:bold;color:#0f235f">📩 ${msg.type === 'support_request' ? 'طلب دعم' : 'بلاغ'} - ${msg.actionMessage || 'تم المعالجة'}</div>
-              <p style="margin-top:8px">${escapeHTML(msg.message || '')}</p>
-              <div style="color:#28a745; font-weight:bold; margin-top:8px;">
-                ✅ ${msg.actionMessage || 'تمت المعالجة'}
-              </div>
-              <small style="color:#777">${created}</small>
-            </div>`;
-        }
-        
+      html += `
+        <div class="post" style="border-right: ${isUnread ? '4px solid var(--primary-color)' : 'none'}; background: ${isUnread ? 'var(--sky)' : '#fff'}; cursor: pointer;" 
+             onclick="openCommentsFromNotification('${postId}', '${msg.id}')">
+          <div style="font-weight:bold;color:#0f235f; display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-comment${isCommentReply ? '-dots' : ''}"></i>
+            ${escapeHTML(msg.title || (isCommentReply ? 'رد على تعليقك' : 'تعليق جديد'))}
+            ${isUnread ? '<span style="background: var(--primary-color); color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-right: 5px;">جديد</span>' : ''}
+          </div>
+          <p style="margin-top:8px; white-space: pre-wrap;">${escapeHTML(msg.message || '')}</p>
+          <div style="margin-top: 8px; color: var(--primary-color); font-weight: 600; font-size: 13px;">
+            <i class="fas fa-external-link-alt"></i> انقر لفتح التعليقات
+          </div>
+          <small style="color:#777">${created}</small>
+        </div>`;
+    }
+    // رسائل المالك (طلبات دعم وبلاغات)
+    else if (isOwner() && (msg.type === 'admin_report' || msg.type === 'support_request')) {
+      if (isResolved) {
+        html += `
+          <div class="post" style="opacity:0.7; background:#f8f9fa; border-right: ${isUnread ? '4px solid var(--primary-color)' : 'none'};">
+            <div style="font-weight:bold;color:#0f235f">📩 ${msg.type === 'support_request' ? 'طلب دعم' : 'بلاغ'} - ${msg.actionMessage || 'تم المعالجة'}</div>
+            <p style="margin-top:8px; white-space: pre-wrap;">${escapeHTML(msg.message || '')}</p>
+            <div style="color:#28a745; font-weight:bold; margin-top:8px;">
+              ✅ ${msg.actionMessage || 'تمت المعالجة'}
+            </div>
+            <small style="color:#777">${created}</small>
+          </div>`;
+      } else {
         const typeText = msg.supportType === 'problem' ? 'مشكلة' : msg.supportType === 'suggestion' ? 'اقتراح' : 'طلب دعم';
         const typeIcon = msg.supportType === 'problem' ? '🚨' : msg.supportType === 'suggestion' ? '💡' : '📩';
         
-        return `
-          <div class="post">
-            <div style="font-weight:bold;color:#0f235f">${typeIcon} ${typeText}</div>
-            <p style="margin-top:8px">${escapeHTML(msg.message || '')}</p>
+        html += `
+          <div class="post" style="border-right: ${isUnread ? '4px solid var(--primary-color)' : 'none'}; background: ${isUnread ? 'var(--sky)' : '#fff'};">
+            <div style="font-weight:bold;color:#0f235f">${typeIcon} ${typeText} ${isUnread ? '<span style="background: var(--primary-color); color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-right: 5px;">جديد</span>' : ''}</div>
+            <p style="margin-top:8px; white-space: pre-wrap;">${escapeHTML(msg.message || '')}</p>
             ${msg.type === 'admin_report' ? `
-            <div class="post-actions">
-              <button class="btn btn-danger btn-xs" onclick="adminReportAction('${doc.id}','ban_poster','${escapeHTML(msg.postOwnerId || '')}')">
-          <i class="fa-solid fa-ban"></i> حظر صاحب المنشور
-        </button>
-        <button class="btn btn-warning btn-xs" onclick="adminReportAction('${doc.id}','ban_reporter','${escapeHTML(msg.reporterUid || '')}')">
-          <i class="fa-solid fa-user-slash"></i> حظر المبلغ
-        </button>
-        <button class="btn btn-info btn-xs" onclick="adminReportAction('${doc.id}','view_single_post','${escapeHTML(msg.postOwnerId || '')}','','${escapeHTML(msg.postId || '')}')">
-          <i class="fa-solid fa-eye"></i> عرض المنشور
-        </button>
-              <button class="btn btn-secondary btn-xs" onclick="adminReportAction('${doc.id}','delete_post','${escapeHTML(msg.postId || '')}')">
-                <i class="fa-solid fa-trash"></i> حذف المنشور
+            <div class="post-actions" style="margin-top: 12px; display: flex; gap: 6px; flex-wrap: wrap;">
+              <button class="btn btn-danger btn-xs" onclick="adminReportAction('${msg.id}','ban_poster','${escapeHTML(msg.postOwnerId || '')}')">
+                <i class="fa-solid fa-ban"></i> حظر
               </button>
-              <button class="btn btn-xs" onclick="adminReportAction('${doc.id}','reject','')">
-                <i class="fa-solid fa-x"></i> رفض البلاغ
+              <button class="btn btn-warning btn-xs" onclick="adminReportAction('${msg.id}','delete_post','${escapeHTML(msg.postId || '')}')">
+                <i class="fa-solid fa-trash"></i> حذف
+              </button>
+              <button class="btn btn-success btn-xs" onclick="adminReportAction('${msg.id}','view_single_post','${escapeHTML(msg.postOwnerId || '')}','','${escapeHTML(msg.postId || '')}')">
+                <i class="fa-solid fa-eye"></i> عرض
+              </button>
+              <button class="btn btn-secondary btn-xs" onclick="adminReportAction('${msg.id}','reject','')">
+                <i class="fa-solid fa-x"></i> رفض
               </button>
             </div>
             ` : ''}
             <small style="color:#777">${created}</small>
           </div>`;
       }
-      
-      return `
-        <div class="post">
-          <div style="font-weight:bold;color:#0f235f">${escapeHTML(msg.title || 'إشعار')}</div>
-          <p style="margin-top:8px">${escapeHTML(msg.message || '')}</div>
+    }
+    // الرسائل العادية للمستخدمين
+    else {
+      html += `
+        <div class="post" style="border-right: ${isUnread ? '4px solid var(--primary-color)' : 'none'}; background: ${isUnread ? 'var(--sky)' : '#fff'};">
+          <div style="font-weight:bold;color:#0f235f">${escapeHTML(msg.title || 'إشعار')} ${isUnread ? '<span style="background: var(--primary-color); color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-right: 5px;">جديد</span>' : ''}</div>
+          <p style="margin-top:8px; white-space: pre-wrap;">${escapeHTML(msg.message || '')}</p>
           <small style="color:#777">${created}</small>
         </div>`;
-    }).join('');
-    
-  } catch (error) {
-    console.error('Error loading inbox:', error);
-    window.inboxContainer.innerHTML = '<div class="post"><p>خطأ في تحميل الرسائل</p></div>';
+    }
+  });
+  
+  window.inboxContainer.innerHTML = html;
+  
+  // إضافة listener للتحديث الفوري
+  if (!fromCache) {
+    startInboxListener();
   }
 }
 
@@ -6203,40 +6606,137 @@ function startAllListeners() {
 
 function startInboxListener() {
   if (!currentUser) return;
+  
+  // إيقاف الـ listener القديم إذا كان موجوداً
   if (notificationsListener) {
     notificationsListener();
   }
   
-  let lastUpdate = 0;
-  const updateInterval = 30000;
+  // إعداد query مختلفة للمالك
+  let inboxQuery;
   
-  notificationsListener = db.collection('inbox')
-    .where('userId', '==', currentUser.uid)
-    .where('status', '==', 'unread')
-    .onSnapshot(async (snapshot) => {
-      const now = Date.now();
-      if (now - lastUpdate < updateInterval) return;
-      
-      lastUpdate = now;
-      
+  if (isOwner()) {
+    // المالك يرى كل الرسائل غير المقروءة (دعم + بلاغات)
+    inboxQuery = db.collection('inbox')
+      .where('status', '==', 'unread')
+      .where('type', 'in', ['support_request', 'admin_report', 'support_reply']);
+  } else {
+    // المستخدم العادي يرى فقط رسائله
+    inboxQuery = db.collection('inbox')
+      .where('userId', '==', currentUser.uid)
+      .where('status', '==', 'unread');
+  }
+  
+  notificationsListener = inboxQuery.onSnapshot(async (snapshot) => {
+    try {
       let unreadCount = 0;
       const nowTime = Date.now();
+      const oneWeekAgo = nowTime - (7 * 24 * 60 * 60 * 1000);
       
       snapshot.forEach(doc => {
         const msg = doc.data();
         const msgTime = msg.createdAt?.toDate?.()?.getTime() || 0;
-        const isRecent = (nowTime - msgTime) < (7 * 24 * 60 * 60 * 1000);
         
-        if (msg.status === 'unread' && isRecent) {
+        // للمالك: حساب كل الرسائل غير المقروءة
+        // للمستخدمين: فقط رسائلهم من الأسبوع الأخير
+        if (isOwner()) {
+          unreadCount++;
+        } else if (msgTime > oneWeekAgo) {
           unreadCount++;
         }
       });
       
+      // تحديث العدد مع إضافة تأثير عند زيادة العدد
+      const oldCount = unreadNotifications.inbox;
       unreadNotifications.inbox = unreadCount;
+      
+      // إذا كان هناك رسائل جديدة، تحديث الفقاعة مع تأثير
+      if (unreadCount > oldCount) {
+        updateAllBadges();
+        
+        // تأثير اهتزاز بسيط للفقاعة
+        const badge = document.getElementById('inbox-badge');
+        if (badge && unreadCount > 0) {
+          badge.style.animation = 'none';
+          setTimeout(() => {
+            badge.style.animation = 'pulse 0.5s 3';
+          }, 10);
+        }
+        
+        // إشعار صوتي خفيف للمالك فقط إذا كان هناك رسائل جديدة
+        if (isOwner() && unreadCount > oldCount && oldCount === 0) {
+          try {
+            const audio = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==');
+            audio.volume = 0.1;
+            audio.play().catch(() => {});
+          } catch (e) {}
+        }
+      }
+      
       updateAllBadges();
-    }, (error) => {
-      console.error('Notifications listener error:', error);
-    });
+      
+    } catch (error) {
+      console.error('Error processing inbox snapshot:', error);
+    }
+  }, (error) => {
+    console.error('Notifications listener error:', error);
+    
+    // إعادة المحاولة بعد 5 ثواني في حالة الخطأ
+    setTimeout(() => {
+      if (currentUser) {
+        startInboxListener();
+      }
+    }, 5000);
+  });
+}
+
+// دالة محسنة لتحديث جميع الفقاعات
+function updateAllBadges() {
+  // فقاعة البريد الوارد الرئيسية
+  const inboxBadge = document.getElementById('inbox-badge');
+  if (inboxBadge) {
+    if (unreadNotifications.inbox > 0) {
+      inboxBadge.style.display = 'flex';
+      inboxBadge.textContent = unreadNotifications.inbox > 9 ? '9+' : unreadNotifications.inbox.toString();
+      
+      // إضافة تأثير للمالك إذا كان هناك رسائل غير مقروءة
+      if (isOwner()) {
+        inboxBadge.style.background = 'linear-gradient(135deg, #ff3b3b, #ff6b6b)';
+        inboxBadge.style.boxShadow = '0 2px 10px rgba(255, 59, 59, 0.5)';
+      }
+    } else {
+      inboxBadge.style.display = 'none';
+    }
+  }
+  
+  // فقاعة المنشورات
+  const postsBadge = document.getElementById('posts-badge');
+  if (postsBadge) {
+    if (unreadPostsCount > 0) {
+      postsBadge.style.display = 'flex';
+      postsBadge.textContent = unreadPostsCount > 9 ? '9+' : unreadPostsCount.toString();
+    } else {
+      postsBadge.style.display = 'none';
+    }
+  }
+  
+  // فقاعة الملف الشخصي (مجموع الإشعارات)
+  const profileBadge = document.getElementById('profile-notification-badge');
+  if (profileBadge) {
+    const totalNotifications = unreadNotifications.inbox + unreadPostsCount;
+    if (totalNotifications > 0) {
+      profileBadge.style.display = 'flex';
+      profileBadge.textContent = totalNotifications > 9 ? '9+' : totalNotifications.toString();
+      
+      // تمييز خاص للمالك
+      if (isOwner() && unreadNotifications.inbox > 0) {
+        profileBadge.style.background = 'linear-gradient(135deg, #ff3b3b, #ff6b6b)';
+        profileBadge.style.animation = 'pulse 2s infinite';
+      }
+    } else {
+      profileBadge.style.display = 'none';
+    }
+  }
 }
 
 function startPostsListener() {
@@ -6325,49 +6825,80 @@ function updateNavBadges() {
 
 async function markAllNotificationsAsRead() {
   if (!currentUser) return;
+  
+  // إزالة رسالة التأكيد - يعمل مباشرة عند النقر
+  const btn = document.getElementById('mark-all-read-btn');
+  const originalText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحديث...';
+  
   try {
-    let query;
+    let updatedCount = 0;
+    
     if (isOwner()) {
-      const allMessages = await db.collection('inbox').get();
-      const batch = db.batch();
-      let updatedCount = 0;
+      // المالك: يقرأ كل الرسائل غير المقروءة الخاصة به (دعم + بلاغات)
+      const unreadMessages = await db.collection('inbox')
+        .where('status', '==', 'unread')
+        .where('type', 'in', ['admin_report', 'support_request', 'support_reply'])
+        .get();
       
-      allMessages.forEach(doc => {
-        const msg = doc.data();
-        if (msg.status === 'unread' && (msg.type === 'admin_report' || msg.type === 'support_request')) {
-          batch.update(doc.ref, { status: 'read' });
-          updatedCount++;
-        }
+      const batch = db.batch();
+      unreadMessages.forEach(doc => {
+        batch.update(doc.ref, { 
+          status: 'read',
+          readAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        updatedCount++;
       });
       
       if (updatedCount > 0) {
         await batch.commit();
-        unreadNotifications.inbox = 0;
-        updateAllBadges();
-        showNotification(`تم تحديد ${updatedCount} إشعار كمقروء`);
       }
     } else {
-      const userMessages = await db.collection('inbox').get();
-      const batch = db.batch();
-      let updatedCount = 0;
+      // المستخدم العادي: يقرأ رسائله الخاصة فقط
+      const userMessages = await db.collection('inbox')
+        .where('userId', '==', currentUser.uid)
+        .where('status', '==', 'unread')
+        .get();
       
+      const batch = db.batch();
       userMessages.forEach(doc => {
-        const msg = doc.data();
-        if (msg.status === 'unread' && msg.userId === currentUser.uid) {
-          batch.update(doc.ref, { status: 'read' });
-          updatedCount++;
-        }
+        batch.update(doc.ref, { 
+          status: 'read',
+          readAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        updatedCount++;
       });
       
       if (updatedCount > 0) {
         await batch.commit();
-        unreadNotifications.inbox = 0;
-        updateAllBadges();
-        showNotification(`تم تحديد ${updatedCount} إشعار كمقروء`);
       }
     }
+    
+    if (updatedCount > 0) {
+      // تحديث العداد المحلي
+      unreadNotifications.inbox = Math.max(0, unreadNotifications.inbox - updatedCount);
+      
+      // تحديث جميع الفقاعات
+      updateAllBadges();
+      
+      // تحديث عرض البريد الوارد
+      if (document.getElementById('inbox-page').style.display === 'block') {
+        // إعادة تحميل الرسائل مع الحالة الجديدة
+        await showInbox();
+      }
+      
+      showNotification(`تم تحديد ${updatedCount} رسالة كمقروءة`);
+    } else {
+      showNotification('لا توجد رسائل غير مقروءة', 'info');
+    }
+    
   } catch (error) {
     console.error('Error marking notifications as read:', error);
+    showNotification('فشل تحديث حالة الرسائل', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalText;
   }
 }
 
@@ -7425,6 +7956,61 @@ async function saveAIKnowledge() {
     }
 }
 
+async function openCommentsFromNotification(postId, notificationId) {
+  if (!postId || !currentUser) {
+    showNotification('لا يمكن فتح التعليقات', 'error');
+    return;
+  }
+  
+  try {
+    // تحديث حالة الإشعار كمقروء
+    if (notificationId) {
+      await db.collection('inbox').doc(notificationId).update({
+        status: 'read',
+        readAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+    
+    // تخزين معرف المنشور للفتح
+    currentCommentsPostId = postId;
+    
+    // الانتقال إلى صفحة التعليقات
+    showPage("comments");
+    
+    // عرض رسالة تحميل
+    const container = document.getElementById("comments-list-page");
+    if (container) {
+      container.innerHTML = `
+        <div class="post" style="text-align: center; padding: 30px;">
+          <div class="spinner" style="width: 30px; height: 30px; border: 3px solid var(--border-color); border-top: 3px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
+          <p>جاري تحميل التعليقات...</p>
+        </div>
+      `;
+    }
+    
+    // تحميل المنشور أولاً للتحقق من وجوده
+    const postDoc = await db.collection("posts").doc(postId).get();
+    if (!postDoc.exists) {
+      if (container) {
+        container.innerHTML = '<div class="post"><p>المنشور غير موجود أو تم حذفه</p></div>';
+      }
+      return;
+    }
+    
+    // تحميل التعليقات
+    await renderCommentsWithCache(postId);
+    
+    // تحديث عدد الإشعارات غير المقروءة
+    unreadNotifications.inbox = Math.max(0, unreadNotifications.inbox - 1);
+    updateAllBadges();
+    
+  } catch (error) {
+    console.error('Error opening comments from notification:', error);
+    showNotification('خطأ في فتح التعليقات', 'error');
+  }
+}
+
+
 function initializeApp() {
     console.log('بدء تهيئة تطبيق سوق الطلاب...');
     
@@ -7474,6 +8060,185 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 100);
 });
+
+async function calculateSupportRequests() {
+  if (!isOwner()) return;
+  
+  try {
+    // جلب طلبات الدعم غير المقروءة
+    const supportQuery = await db.collection('inbox')
+      .where('type', 'in', ['support_request', 'admin_report'])
+      .where('status', '==', 'unread')
+      .get();
+    
+    const unreadSupportCount = supportQuery.size;
+    
+    console.log(`[ADMIN] طلبات دعم غير مقروءة: ${unreadSupportCount}`);
+    
+    // تحديث فقاعة لوحة التحكم
+    const adminBadge = document.getElementById('admin-panel-badge');
+    if (adminBadge) {
+      if (unreadSupportCount > 0) {
+        adminBadge.style.display = 'flex';
+        adminBadge.textContent = unreadSupportCount > 9 ? '9+' : unreadSupportCount.toString();
+        adminBadge.style.background = 'linear-gradient(135deg, #ff3b3b, #ff6b6b)';
+        adminBadge.style.boxShadow = '0 2px 10px rgba(255, 59, 59, 0.5)';
+        adminBadge.style.animation = 'pulse 1.5s infinite';
+        
+        // تأثير اهتزاز للانتباه
+        if (window.lastSupportCount !== unreadSupportCount) {
+          adminBadge.style.transform = 'scale(1.2)';
+          setTimeout(() => {
+            adminBadge.style.transform = 'scale(1)';
+          }, 300);
+        }
+      } else {
+        adminBadge.style.display = 'none';
+      }
+    }
+    
+    // تحديث فقاعة "الرد على المستخدمين"
+    const supportBadge = document.getElementById('user-support-badge');
+    if (supportBadge) {
+      if (unreadSupportCount > 0) {
+        supportBadge.style.display = 'flex';
+        supportBadge.textContent = unreadSupportCount > 9 ? '9+' : unreadSupportCount.toString();
+        supportBadge.style.background = 'linear-gradient(135deg, #ff6b6b, #ff8e6b)';
+        supportBadge.style.boxShadow = '0 2px 10px rgba(255, 107, 107, 0.5)';
+        supportBadge.style.animation = 'pulse 2s infinite';
+      } else {
+        supportBadge.style.display = 'none';
+      }
+    }
+    
+    // تحديث فقاعة "حسابي" للمالك
+    const profileBadge = document.getElementById('profile-notification-badge');
+    if (profileBadge) {
+      const totalNotifications = (unreadNotifications.inbox || 0) + unreadSupportCount;
+      if (totalNotifications > 0) {
+        profileBadge.style.display = 'flex';
+        profileBadge.textContent = totalNotifications > 9 ? '9+' : totalNotifications.toString();
+        profileBadge.style.background = 'linear-gradient(135deg, #ff3b3b, #ff6b6b)';
+        profileBadge.style.animation = 'pulse 2s infinite';
+      }
+    }
+    
+    // تخزين العدد للمقارنة لاحقاً
+    window.lastSupportCount = unreadSupportCount;
+    window.unreadSupportRequests = unreadSupportCount;
+    
+    // تحديث العدد في الـ title للمتصفح
+    if (unreadSupportCount > 0) {
+      document.title = `(${unreadSupportCount}) ${document.title.replace(/^\(\d+\)\s*/, '')}`;
+    } else {
+      document.title = document.title.replace(/^\(\d+\)\s*/, '');
+    }
+    
+    return unreadSupportCount;
+    
+  } catch (error) {
+    console.error('[ADMIN] خطأ في حساب طلبات الدعم:', error);
+    
+    // محاولة استخدام طريقة بديلة
+    try {
+      // جلب جميع الرسائل وتصفيتها محلياً
+      const allMessages = await db.collection('inbox').get();
+      let unreadSupportCount = 0;
+      
+      allMessages.forEach(doc => {
+        const msg = doc.data();
+        if ((msg.type === 'support_request' || msg.type === 'admin_report') && msg.status === 'unread') {
+          unreadSupportCount++;
+        }
+      });
+      
+      // تحديث الفقاعات مع العدد المحسوب
+      updateAdminBadgesWithCount(unreadSupportCount);
+      return unreadSupportCount;
+      
+    } catch (fallbackError) {
+      console.error('[ADMIN] فشلت المحاولة البديلة:', fallbackError);
+      return 0;
+    }
+  }
+}
+
+// دالة مساعدة لتحديث الفقاعات مع عدد محدد
+function updateAdminBadgesWithCount(count) {
+  const adminBadge = document.getElementById('admin-panel-badge');
+  if (adminBadge) {
+    if (count > 0) {
+      adminBadge.style.display = 'flex';
+      adminBadge.textContent = count > 9 ? '9+' : count.toString();
+    } else {
+      adminBadge.style.display = 'none';
+    }
+  }
+  
+  const supportBadge = document.getElementById('user-support-badge');
+  if (supportBadge) {
+    if (count > 0) {
+      supportBadge.style.display = 'flex';
+      supportBadge.textContent = count > 9 ? '9+' : count.toString();
+    } else {
+      supportBadge.style.display = 'none';
+    }
+  }
+}
+
+async function markAllSupportAsRead() {
+  if (!isOwner()) return;
+  
+  const btn = document.getElementById('mark-support-read-btn');
+  const originalText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحديث...';
+  
+  try {
+    // جلب جميع طلبات الدعم غير المقروءة
+    const unreadSupport = await db.collection('inbox')
+      .where('status', '==', 'unread')
+      .where('type', 'in', ['support_request', 'admin_report'])
+      .get();
+    
+    const batch = db.batch();
+    let updatedCount = 0;
+    
+    unreadSupport.forEach(doc => {
+      batch.update(doc.ref, { 
+        status: 'read',
+        readAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      updatedCount++;
+    });
+    
+    if (updatedCount > 0) {
+      await batch.commit();
+      
+      // تحديث العداد المحلي
+      unreadNotifications.inbox = Math.max(0, unreadNotifications.inbox - updatedCount);
+      
+      // تحديث جميع الفقاعات
+      updateAllBadges();
+      
+      // تحديث عرض صفحة الرد على المستخدمين
+      if (document.getElementById('user-support-page').style.display === 'block') {
+        await loadUserSupportRequests();
+      }
+      
+      showNotification(`تم تحديد ${updatedCount} طلب دعم كمقروء`);
+    } else {
+      showNotification('لا توجد رسائل غير مقروءة', 'info');
+    }
+    
+  } catch (error) {
+    console.error('Error marking support as read:', error);
+    showNotification('فشل تحديث حالة طلبات الدعم', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalText;
+  }
+}
 
 </script>
 </body>
